@@ -6,13 +6,13 @@ stack from scratch — Terraform modules for networking and compute, a Dockerize
 Flask API, and a custom Python tool that detects infrastructure drift by 
 comparing live AWS state against YAML configuration.
 
-## Estado actual
+## Current Status
 
-- [x] Infraestructura AWS (VPC, ALB, EC2, RDS, S3, IAM)
-- [ ] API Flask dockerizada (3 endpoints)
-- [ ] Drift detector (en progreso)
+- [x] AWS Infrastructure (VPC, ALB, EC2, RDS, S3, IAM)
+- [ ] Dockerized Flask API (3 endpoints)
+- [ ] Drift detector (in progress)
 - [ ] CI/CD GitHub Actions
-- [ ] Diagrama de arquitectura
+- [ ] Architecture diagram
 
 ## Stack
 
@@ -22,6 +22,4 @@ comparing live AWS state against YAML configuration.
 - Docker
 - Flask
 
-## Próximos pasos
 
-Ver [roadmap técnico](./docs/roadmap.md) (próximamente).
