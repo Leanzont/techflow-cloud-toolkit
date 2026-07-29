@@ -45,7 +45,7 @@ terraform {
     use_lockfile = true
   }
 }
-
+```
 
 ## Prerequisites
 
