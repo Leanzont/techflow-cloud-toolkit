@@ -1,0 +1,6 @@
+project_name        = "techflow-cloud-toolkit"
+region              = "us-east-2"
+bucket_name_log     = "techflow-logs-leandro2026"
+bucket_name_backups = "techflow-backups-leandro2026"
+instance_type       = "t3.micro"
+db_password         = "CHANGEME_STRONG_PASSWORD_123"
