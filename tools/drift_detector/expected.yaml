@@ -1,0 +1,13 @@
+ec2:
+  - name: "techflow-cloud-toolkit-ec2-instance-ec2-instance-techflow"
+    expected_state: "running"
+
+s3:
+  - name: "techflow-logs-leandro2026"
+    expected: "exists"
+  - name: "techflow-backups-leandro2026"
+    expected: "exists"
+
+rds:
+  - name: "techflow-cloud-toolkit-rds-postgressql"
+    expected_state: "available"

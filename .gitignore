@@ -35,3 +35,6 @@ modules/ec2/my-key-techflow.pub
 *.pem
 id_rsa*
 id_ed25519*
+
+#python generate script output
+drift_report.json
