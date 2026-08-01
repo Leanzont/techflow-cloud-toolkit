@@ -10,7 +10,7 @@ comparing live AWS state against YAML configuration.
 
 - [x] AWS Infrastructure (VPC, ALB, EC2, RDS, S3, IAM)
 - [ ] Dockerized Flask API (3 endpoints)
-- [ ] Drift detector (in progress)
+- [x] Drift Detector
 - [ ] CI/CD GitHub Actions
 - [ ] Architecture diagram
 
