@@ -45,7 +45,7 @@ resource "aws_instance" "instance_ec2_techflow" {
   vpc_security_group_ids = [aws_security_group.sg_ec2.id]
   key_name               = var.public_key != "" ? aws_key_pair.my_key_ec2[0].key_name : null
   iam_instance_profile   = var.instance_profile
- 
+
   user_data = <<-EOF
                   #!/bin/bash
                   yum update -y
