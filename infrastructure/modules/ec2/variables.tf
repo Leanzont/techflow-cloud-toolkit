@@ -25,3 +25,9 @@ variable "my_ip" {
 variable "instance_profile" {
   type = string
 }
+
+variable "public_key" {
+  description = "Public key material for SSH access. If empty, no key pair is created."
+  type        = string
+  default     = ""
+}

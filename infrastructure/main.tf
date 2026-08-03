@@ -55,6 +55,9 @@ module "ec2" {
   vpc_id           = module.vpc.vpc_id
   my_ip            = "${trimspace(data.http.my_ip.response_body)}/32"
   instance_profile = module.iam.instance_profile
+
+  # Only pass the key if the file exists locally
+  public_key = fileexists("${path.module}/modules/ec2/my-key-techflow.pub") ? file("${path.module}/modules/ec2/my-key-techflow.pub") : ""
 }
 
 module "rds" {

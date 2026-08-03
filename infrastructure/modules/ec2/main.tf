@@ -31,8 +31,9 @@ resource "aws_security_group" "sg_ec2" {
 
 # Key Pair 
 resource "aws_key_pair" "my_key_ec2" {
-  key_name   = "my-key-techflow"
-  public_key = file("~/techflow-cloud-toolkit/infrastructure/modules/ec2/my-key-techflow.pub")
+  count      = var.public_key != "" ? 1 : 0
+  key_name   = "${var.project_name}-key"
+  public_key = var.public_key
 }
 
 
@@ -42,9 +43,9 @@ resource "aws_instance" "instance_ec2_techflow" {
   instance_type          = var.instance_type
   subnet_id              = var.subnet_id
   vpc_security_group_ids = [aws_security_group.sg_ec2.id]
-  key_name               = aws_key_pair.my_key_ec2.key_name
+  key_name               = var.public_key != "" ? aws_key_pair.my_key_ec2[0].key_name : null
   iam_instance_profile   = var.instance_profile
-
+ 
   user_data = <<-EOF
                   #!/bin/bash
                   yum update -y
