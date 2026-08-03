@@ -1,5 +1,5 @@
 variable "s3_bucket_name_log" {
-  type = string 
+  type = string
 }
 
 variable "s3_bucket_name_backups" {
@@ -7,6 +7,6 @@ variable "s3_bucket_name_backups" {
 }
 
 variable "project_name" {
-  type = string 
+  type = string
 }
 

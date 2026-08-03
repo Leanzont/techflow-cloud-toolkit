@@ -26,7 +26,7 @@ resource "aws_iam_role" "role_ec2" {
 
 resource "aws_iam_role_policy" "s3_policy" {
   name = "${var.project_name}-s3-policy"
-  role = aws_iam_role.role_ec2.id 
+  role = aws_iam_role.role_ec2.id
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -52,6 +52,6 @@ resource "aws_iam_role_policy" "s3_policy" {
 # Instance Profile 
 
 resource "aws_iam_instance_profile" "ec2_profile" {
-   name = "${var.project_name}-ec2-profile"
-   role = aws_iam_role.role_ec2.name 
+  name = "${var.project_name}-ec2-profile"
+  role = aws_iam_role.role_ec2.name
 }

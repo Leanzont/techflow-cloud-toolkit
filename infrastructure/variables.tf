@@ -11,13 +11,13 @@ variable "bucket_name_log" {
 }
 
 variable "bucket_name_backups" {
-  type = string 
+  type = string
 }
 
 variable "instance_type" {
-  type = string 
+  type = string
 }
 variable "db_password" {
-  type = string
-  sensitive = true 
+  type      = string
+  sensitive = true
 }

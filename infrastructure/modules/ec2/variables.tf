@@ -7,15 +7,15 @@ variable "ami" {
 }
 
 variable "instance_type" {
-  type = string 
+  type = string
 }
 
 variable "subnet_id" {
-  type = string 
+  type = string
 }
 
 variable "vpc_id" {
-  type = string 
+  type = string
 }
 
 variable "my_ip" {
@@ -23,5 +23,5 @@ variable "my_ip" {
 }
 
 variable "instance_profile" {
-  type = string 
+  type = string
 }

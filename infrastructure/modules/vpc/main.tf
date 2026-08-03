@@ -58,26 +58,26 @@ resource "aws_subnet" "private_subnet_2" {
 }
 # route table 
 resource "aws_route_table" "route_table_public_subnet" {
-   vpc_id = aws_vpc.main_vpc.id
+  vpc_id = aws_vpc.main_vpc.id
 
-   route {
-     cidr_block = "0.0.0.0/0"
-     gateway_id = aws_internet_gateway.gw_main_vp.id 
-   }
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.gw_main_vp.id
+  }
 
-   tags = {
-     Name = "${var.project_name}-route-table-public-subnet"
-   }
+  tags = {
+    Name = "${var.project_name}-route-table-public-subnet"
+  }
 }
 
 # Associate route table subnet-1
 resource "aws_route_table_association" "associate_public_subnet_1" {
-   subnet_id      = aws_subnet.public_subnet_1.id
-   route_table_id = aws_route_table.route_table_public_subnet.id
+  subnet_id      = aws_subnet.public_subnet_1.id
+  route_table_id = aws_route_table.route_table_public_subnet.id
 }
 
 # Associtae route table subnet-2
 resource "aws_route_table_association" "associate_public_subnet_2" {
-   subnet_id      = aws_subnet.public_subnet_2.id
-   route_table_id = aws_route_table.route_table_public_subnet.id
+  subnet_id      = aws_subnet.public_subnet_2.id
+  route_table_id = aws_route_table.route_table_public_subnet.id
 }

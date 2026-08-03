@@ -3,7 +3,7 @@ data "http" "my_ip" {
 }
 
 data "aws_ami" "amazon_linux_2" {
-  most_recent = true 
+  most_recent = true
   owners      = ["amazon"]
 
   filter {

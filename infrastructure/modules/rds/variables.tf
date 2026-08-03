@@ -1,5 +1,5 @@
 variable "project_name" {
-  type = string 
+  type = string
 }
 variable "vpc_id" {
   type = string
@@ -8,9 +8,9 @@ variable "sg_ec2_id" {
   type = string
 }
 variable "private_subnet_ids" {
-  type = list(string) 
+  type = list(string)
 }
 variable "db_password" {
-  type = string
-  sensitive = true 
+  type      = string
+  sensitive = true
 }
