@@ -38,3 +38,7 @@ id_ed25519*
 
 #python generate script output
 drift_report.json
+venv/
+.venv/
+__pycache__/
+*.pyc
