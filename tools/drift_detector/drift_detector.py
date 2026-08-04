@@ -146,6 +146,19 @@ def save_local(report, file="drift_report.json"):
     with open(file, "w") as f:
         json.dump(report, f, indent=4)
     return f"save local in --> {file}\n"
+
+def generate_report(config_path="expected.yaml"):
+    """Run drift detection and return the report dictionary."""
+    config = file_yaml(config_path)
+    report = {}
+    if "ec2" in config:
+        report['ec2'] = ec2(config)
+    if "rds" in config:
+        report['rds'] = rds(config)
+    if "s3" in config:
+        report['s3'] = s3(config)
+
+    return report
             
 
 def main():
