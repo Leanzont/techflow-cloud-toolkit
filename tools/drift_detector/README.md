@@ -22,26 +22,26 @@ Python tool that detects infrastructure drift between a desired state
 
 
 ```
-┌───────────────┐     ┌──────────────────┐       ┌───────────────┐
-│ expected.yaml │────→│ drift_detector.py│←──────│ AWS APIs      │
-│ (desired)     │     │                  │       │ (EC2, S3, RDS)│
-└───────────────┘     └──────────────────┘       └───────────────┘
+┌────────┐     ┌─────────┐       ┌─────────┐
+│ expected.yaml  │ ─→│ drift_detector.py│←── │ AWS APIs         │
+│ (desired)      │     │                  │       │ (EC2, S3, RDS)   │
+└────────┘     └─────────┘       └─────────┘
                               │
                               ↓
-                    ┌─────────────────┐
-                    │  Normalization  │  ← Both sources → same dict structure
-                    │   (dict logic)  │
-                    └────────┬────────┘
+                    ┌────────┐
+                    │  Normalization │  ← Both sources → same dict structure
+                    │   (dict logic) │
+                    └────────┘
                              ↓
-                    ┌─────────────────┐
-                    │   Comparison    │  ← Set operations: missing / extra / changed
-                    │   (diff engine) │
-                    └────────┬────────┘
+                    ┌────────┐
+                    │   Comparison   │  ← Set operations: missing / extra / changed
+                    │   (diff engine)│
+                    └────────┘
                              ↓
-                    ┌─────────────────┐
-                    │  Console + JSON │  ← Human readable + machine parseable
-                    │    Output       │
-                    └─────────────────┘
+                    ┌────────┐
+                    │  Console + JSON│  ← Human readable + machine parseable
+                    │    Output      │
+                    └────────┘
 ```
 
 
