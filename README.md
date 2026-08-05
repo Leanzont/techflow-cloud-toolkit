@@ -1,6 +1,7 @@
 # TechFlow Cloud Toolkit
 
 [![Terraform CI](https://github.com/Leanzont/techflow-cloud-toolkit/actions/workflows/terraform.yml/badge.svg)](https://github.com/Leanzont/techflow-cloud-toolkit/actions/workflows/terraform.yml)
+[![Docker Build and Push](https://github.com/Leanzont/techflow-cloud-toolkit/actions/workflows/docker.yml/badge.svg)](https://github.com/Leanzont/techflow-cloud-toolkit/actions/workflows/docker.yml)
 
 > A hands-on cloud engineering project that provisions a complete AWS environment using Terraform modules, deploys a containerized Flask API, and includes a custom Python drift detection tool to audit live infrastructure state against declarative configuration.
 
@@ -85,7 +86,7 @@ techflow-cloud-toolkit/
 | Containerized Flask API | ✅ Complete | 3 endpoints: /health, /data, /drift |
 | Drift Detector | ✅ Complete | Detects missing, changed, and unexpected resources |
 | CI/CD GitHub Actions (Terraform) | ✅ Complete | fmt → validate → plan on every push |
-| CI/CD GitHub Actions (Docker) | 🔲 In Progress | Build & push to Docker Hub |
+| CI/CD GitHub Actions (Docker) | ✅ Complete | Build & push to Docker Hub |
 | Architecture Diagram | ✅ Complete | Draw.io diagram with CIDRs and traffic flow |
 
 ---
@@ -150,7 +151,7 @@ python drift_detector.py --config expected.yaml
 
 ## 🔮 Future Improvements
 
-- [ ] CI/CD Docker workflow (build + push to Docker Hub)
+- [x] CI/CD Docker workflow (build + push to Docker Hub)
 - [ ] Connect Flask API to RDS PostgreSQL for persistent storage
 - [ ] Add NAT Gateway for private subnet outbound access
 - [ ] CloudWatch alarms for EC2 and RDS
