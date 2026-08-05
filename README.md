@@ -17,22 +17,22 @@
 ## 🏗️ Architecture
 
 ```
-┌─────────────┐     ┌─────┐     ┌──────────┐     ┌─────────┐
-│   Internet  │────→│ ALB │────→│  EC2     │────→│   RDS   │
-└─────────────┘     └─────┘     │ (Docker) │     │(PostgreSQL)
-                                └────┬─────┘     └─────────┘
-                                     │
-                                ┌────┴────┐
-                                │Flask API│
-                                │/health  │
-                                │/data    │
-                                │/drift   │
-                                └─────────┘
-                                     │
-                                ┌────┴─────────────┐
-                                │Drift Detector    │
-                                │(Python/Boto3)    │
-                                └──────────────────┘
+┌──────┐     ┌─────┐      ┌──────┐     ┌───────┐
+│   Internet │─→ │ ALB      │─→  │  EC2       │ ─→│   RDS        │
+└──────┘     └─────┘      │ (Docker)   │     │ (PostgreSQL) │
+                                         └────┬─┘     └───────┘
+                                                   │
+                                             ┌──┴──┐
+                                             │Flask API │
+                                             │/health   │
+                                             │/data     │
+                                             │/drift    │
+                                             └─────┘
+                                                  │
+                                        ┌────┴────┐
+                                        │Drift Detector    │
+                                        │(Python/Boto3)    │
+                                        └─────────┘
 ```
 
 **Traffic flow:** Internet → ALB (public subnets) → EC2 (public subnets) → RDS (private subnets)
