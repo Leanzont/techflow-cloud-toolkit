@@ -1,0 +1,29 @@
+name: Docker CI
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'api/**'
+      - 'tools/drift_detector/**'
+      - '.github/workflows/docker*.yml'
+
+jobs:
+  build:
+    name: Build Docker Image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Build
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build image (no push)
+        uses: docker/build-push-actions@v5
+        with:
+          context: .
+          file: ./api/Dockerfile
+          push: false
+          tags: techflow-api:pr-test
