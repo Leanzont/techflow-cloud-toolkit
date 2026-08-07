@@ -86,7 +86,7 @@ techflow-cloud-toolkit/
 | Containerized Flask API | ✅ Complete | 3 endpoints: /health, /data, /drift |
 | Drift Detector | ✅ Complete | Detects missing, changed, and unexpected resources |
 | CI/CD GitHub Actions (Terraform) | ✅ Complete | fmt → validate → plan on every push |
-| CI/CD GitHub Actions (Docker) | ✅ Complete | Build & push to Docker Hub |
+| CI/CD GitHub Actions (Docker) | ✅ Complete | CI on PR: build without push → CD on merge: build & push to Docker Hub |
 | Architecture Diagram | ✅ Complete | Draw.io diagram with CIDRs and traffic flow |
 
 ---
