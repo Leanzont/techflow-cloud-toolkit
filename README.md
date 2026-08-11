@@ -1,6 +1,6 @@
 # TechFlow Cloud Toolkit
 
-[![Terraform CI](https://github.com/Leanzont/techflow-cloud-toolkit/actions/workflows/terraform.yml/badge.svg)](https://github.com/Leanzont/techflow-cloud-toolkit/actions/workflows/terraform.yml)
+[![Terraform Validate](https://github.com/Leanzont/techflow-cloud-toolkit/actions/workflows/terraform-validate.yml/badge.svg)](https://github.com/Leanzont/techflow-cloud-toolkit/actions/workflows/terraform-validate.yml)
 [![Docker Build and Push](https://github.com/Leanzont/techflow-cloud-toolkit/actions/workflows/docker.yml/badge.svg)](https://github.com/Leanzont/techflow-cloud-toolkit/actions/workflows/docker.yml)
 
 > A hands-on cloud engineering project that provisions a complete AWS environment using Terraform modules, deploys a containerized Flask API, and includes a custom Python drift detection tool to audit live infrastructure state against declarative configuration.
@@ -49,7 +49,7 @@ S3 is accessed via IAM from EC2 for logs and backups.
 ```
 techflow-cloud-toolkit/
 ├── .github/workflows/          # CI/CD pipelines
-│   ├── terraform.yml           # Terraform fmt, validate, plan
+│   ├── terraform-validate.yml  # Terraform fmt, validate, plan on PR
 │   └── docker.yml              # Docker build & push (coming soon)
 ├── infrastructure/             # Terraform modules
 │   ├── modules/
@@ -88,6 +88,7 @@ techflow-cloud-toolkit/
 | CI/CD GitHub Actions (Terraform) | ✅ Complete | fmt → validate → plan on every push |
 | CI/CD GitHub Actions (Docker) | ✅ Complete | CI on PR: build without push → CD on merge: build & push to Docker Hub |
 | Architecture Diagram | ✅ Complete | Draw.io diagram with CIDRs and traffic flow |
+| IMDSv2 Enforcement | ✅ Complete | Blocks SSRF-based credential theft via EC2 metadata service |
 
 ---
 
@@ -146,12 +147,15 @@ python drift_detector.py --config expected.yaml
 4. **Remote state with S3** — Using `use_lockfile` for native state locking without DynamoDB.
 5. **Unexpected resource detection** — Set operations (`aws_names - expected_names`) find resources that exist in AWS but aren't in config.
 6. **API as a bridge** — A Flask API alone is just an endpoint. Real value comes when it connects to something meaningful. I integrated the drift detector into a `/drift` endpoint so the API serves as the public interface for infrastructure audits. Containerizing it with Docker means the runtime, dependencies, and code ship together — no "works on my machine" problems.
+7. **IMDSv2 as defense-in-depth** — Enforcing `http_tokens = "required"` on EC2 instances blocks the #1 attack vector for IAM credential theft (SSRF). Verified: IMDSv1 returns 401 Unauthorized, IMDSv2 with session token works. `http_put_response_hop_limit = 1` prevents Docker containers from reaching the metadata service.
 
 ---
 
 ## 🔮 Future Improvements
 
 - [x] CI/CD Docker workflow (build + push to Docker Hub)
+- [x] IMDSv2 enforcement on EC2 instances
+- [ ] IAM Hardening: least privilege policies, TLS conditions, bucket policies
 - [ ] Connect Flask API to RDS PostgreSQL for persistent storage
 - [ ] Add NAT Gateway for private subnet outbound access
 - [ ] CloudWatch alarms for EC2 and RDS
