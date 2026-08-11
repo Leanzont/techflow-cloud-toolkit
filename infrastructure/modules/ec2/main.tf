@@ -46,6 +46,14 @@ resource "aws_instance" "instance_ec2_techflow" {
   key_name               = var.public_key != "" ? aws_key_pair.my_key_ec2[0].key_name : null
   iam_instance_profile   = var.instance_profile
 
+  # IMDSv2: Enforce session token, block SSRF
+  metadata_options {
+    http_tokens                 = "required"
+    http_endpoint               = "enabled"
+    http_put_response_hop_limit = 1
+    instance_metadata_tags      = "disabled"
+  }
+
   user_data = <<-EOF
                   #!/bin/bash
                   yum update -y
