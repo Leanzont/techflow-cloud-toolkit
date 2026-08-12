@@ -32,18 +32,46 @@ resource "aws_iam_role_policy" "s3_policy" {
     Version = "2012-10-17"
     Statement = [
       {
+        Sid    = "AllowListBuckets"
+        Effect = "Allow"
+        Action = "s3:ListBucket"
+        Resource = [
+          var.log_bucket_arn,
+          var.backups_bucket_arn
+        ]
+        Condition = {
+          Bool = {
+            "aws:SecureTransport" = "true"
+          }
+        }
+      },
+      {
+        Sid    = "AllowLogBucketObjectAccess"
         Effect = "Allow"
         Action = [
           "s3:GetObject",
-          "s3:PutObject",
-          "s3:ListBucket"
+          "s3:PutObject"
         ]
-        Resource = [
-          var.log_bucket_arn,
-          var.backups_bucket_arn,
-          "${var.log_bucket_arn}/*",
-          "${var.backups_bucket_arn}/*"
+        Resource = "${var.log_bucket_arn}/*"
+        Condition = {
+          Bool = {
+            "aws:SecureTransport" = "true"
+          }
+        }
+      },
+      {
+        Sid    = "AllowBackupsBucketObjectAccess"
+        Effect = "Allow"
+        Action = [
+          "s3:GetObject",
+          "s3:PutObject"
         ]
+        Resource = "${var.backups_bucket_arn}/*"
+        Condition = {
+          Bool = {
+            "aws:SecureTransport" = "true"
+          }
+        }
       }
     ]
   })
