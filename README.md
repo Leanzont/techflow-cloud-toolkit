@@ -155,7 +155,7 @@ python drift_detector.py --config expected.yaml
 
 - [x] CI/CD Docker workflow (build + push to Docker Hub)
 - [x] IMDSv2 enforcement on EC2 instances
-- [ ] IAM Hardening: least privilege policies, TLS conditions, bucket policies
+- [x] IAM Hardening: least privilege policies, TLS conditions, bucket policies
 - [ ] Connect Flask API to RDS PostgreSQL for persistent storage
 - [ ] Add NAT Gateway for private subnet outbound access
 - [ ] CloudWatch alarms for EC2 and RDS
