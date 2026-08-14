@@ -45,12 +45,10 @@ resource "aws_security_group" "alb_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  egress {
-    to_port     = 0
-    from_port   = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+  tags = {
+    Name = "${var.project_name}-alb-sg"
   }
+
 }
 
 # Target Group Attachment for connect my ALB to my EC2

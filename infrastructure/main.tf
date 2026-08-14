@@ -80,3 +80,26 @@ module "alb" {
   ec2_instance_id   = module.ec2.instance_id
 }
 
+
+# Allow ALB to reach EC2 on HTTP port 80
+resource "aws_security_group_rule" "alb_to_ec2_http" {
+  type                     = "ingress"
+  from_port                = 80
+  to_port                  = 80
+  protocol                 = "tcp"
+  source_security_group_id = module.alb.alb_sg_id
+  security_group_id        = module.ec2.sg_ec2_id
+  description              = "Allow HTTP from ALB to EC2"
+}
+
+# Allow ALB egress only to EC2 security group on HTTP
+resource "aws_security_group_rule" "alb_egress_to_ec2" {
+  type                     = "egress"
+  from_port                = 80
+  to_port                  = 80
+  protocol                 = "tcp"
+  source_security_group_id = module.ec2.sg_ec2_id
+  security_group_id        = module.alb.alb_sg_id
+  description              = "Allow ALB to forward HTTP to EC2 only"
+}
+
