@@ -12,19 +12,24 @@ resource "aws_security_group" "sg_ec2" {
     cidr_blocks = [var.my_ip]
   }
 
-  ingress {
-    description = "HTTP for the API"
-    to_port     = 80
-    from_port   = 80
+  egress {
+    description = "HTTP outbound for Docker and AWS services"
+    from_port   = 443
+    to_port     = 443
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
-    to_port     = 0
-    from_port   = 0
-    protocol    = "-1"
+    description = "DNS outbound"
+    from_port   = 53
+    to_port     = 53
+    protocol    = "udp"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "${var.project_name}-sg-ec2"
   }
 
 }
