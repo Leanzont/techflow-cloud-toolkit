@@ -148,6 +148,21 @@ python drift_detector.py --config expected.yaml
 5. **Unexpected resource detection** — Set operations (`aws_names - expected_names`) find resources that exist in AWS but aren't in config.
 6. **API as a bridge** — A Flask API alone is just an endpoint. Real value comes when it connects to something meaningful. I integrated the drift detector into a `/drift` endpoint so the API serves as the public interface for infrastructure audits. Containerizing it with Docker means the runtime, dependencies, and code ship together — no "works on my machine" problems.
 7. **IMDSv2 as defense-in-depth** — Enforcing `http_tokens = "required"` on EC2 instances blocks the #1 attack vector for IAM credential theft (SSRF). Verified: IMDSv1 returns 401 Unauthorized, IMDSv2 with session token works. `http_put_response_hop_limit = 1` prevents Docker containers from reaching the metadata service.
+8. **Traffic Control — ALB + EC2 Security Groups** — I learned how to 
+control HTTP traffic to EC2 instances using an ALB as the front door. 
+The traffic flow is:
+
+`Internet → port 80 → ALB → EC2`
+
+For outbound traffic, the EC2 connects directly through:
+
+`EC2 → port 443 (HTTPS) + port 53 (DNS) → Internet Gateway → Internet`
+
+This is more secure because nobody can reach the EC2 directly on port 80. 
+Before this change, the EC2 accepted HTTP from 0.0.0.0/0, which is a 
+security risk. The solution uses Security Group referencing across three 
+files: modules/alb/main.tf, modules/ec2/main.tf, and root/main.tf as 
+the orchestrator.
 
 ---
 
