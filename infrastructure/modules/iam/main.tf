@@ -7,6 +7,7 @@ resource "aws_iam_role" "role_ec2" {
     Version = "2012-10-17"
     Statement = [
       {
+        Sid    = "AllowEC2ToAssumeRole"
         Effect = "Allow"
         Principal = {
           Service = "ec2.amazonaws.com"
@@ -72,6 +73,20 @@ resource "aws_iam_role_policy" "s3_policy" {
             "aws:SecureTransport" = "true"
           }
         }
+      },
+      {
+        Sid    = "DenyS3DeleteOperations"
+        Effect = "Deny"
+        Action = [
+          "s3:DeleteObject",
+          "s3:DeleteBucket"
+        ]
+        Resource = [
+          var.log_bucket_arn,
+          var.backups_bucket_arn,
+          "${var.log_bucket_arn}/*",
+          "${var.backups_bucket_arn}/*"
+        ]
       }
     ]
   })
