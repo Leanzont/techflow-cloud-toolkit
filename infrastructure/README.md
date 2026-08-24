@@ -53,7 +53,7 @@ Private Subnet 1 (10.0.10.0/24) ─┐
 Private Subnet 2 (10.0.11.0/24) ─┘                 (private outbound only)
 ```
 
-![Architecture Diagram](infrastructure/architecture_diagram_AWS.png)
+![Architecture Diagram](infrastructure/architecture.png)
 
 ---
 
