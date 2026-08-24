@@ -1,3 +1,4 @@
+
 # TechFlow Cloud Toolkit
 
 [![Terraform Validate](https://github.com/Leanzont/techflow-cloud-toolkit/actions/workflows/terraform-validate.yml/badge.svg)](https://github.com/Leanzont/techflow-cloud-toolkit/actions/workflows/terraform-validate.yml)
@@ -38,7 +39,19 @@
 
 **Traffic flow:** Internet → ALB (public subnets) → EC2 (public subnets) → RDS (private subnets)
 
-S3 is accessed via IAM from EC2 for logs and backups.
+This infrastructure runs inside a single VPC (`10.0.0.0/16`) divided into four subnets — two public and two private across two Availability Zones.
+
+**Public subnets** host the ALB and the EC2 instance. The ALB accepts inbound HTTP traffic from the internet and forwards it to the EC2. The EC2 security group allows inbound SSH (port 22, restricted to a single IP) and accepts HTTP only from the ALB security group — not from the open internet. For outbound traffic, the EC2 connects directly through the Internet Gateway on port 443 (HTTPS) for Docker and AWS services, and port 53 (UDP) for DNS.
+
+**Private subnets** host the RDS PostgreSQL instance. RDS has no public IP and no direct route to the internet — it is only reachable from the EC2 security group on port 5432. However, private resources sometimes need outbound internet access for OS patches or AWS service calls. This is handled by the NAT Gateway, which lives in `public_subnet_1` and holds an Elastic IP. Private subnets route all outbound traffic through it — they can initiate connections to the internet, but the internet cannot initiate connections back to them.
+
+```
+Internet → IGW → ALB → EC2                          (inbound public traffic)
+EC2 → IGW → Internet                                (EC2 outbound: HTTPS + DNS)
+Private Subnet 1 (10.0.10.0/24) ─┐
+                                   ├→ NAT Gateway → IGW → Internet
+Private Subnet 2 (10.0.11.0/24) ─┘                 (private outbound only)
+```
 
 ![Architecture Diagram](infrastructure/architecture.png)
 
@@ -80,22 +93,27 @@ techflow-cloud-toolkit/
 
 ## ✅ Current Status
 
-| Component | Status | Notes |
-|-----------|--------|-------|
-| AWS Infrastructure (VPC, ALB, EC2, RDS, S3, IAM) | ✅ Complete | Modular Terraform, 2 AZs, private data tier |
-| Containerized Flask API | ✅ Complete | 3 endpoints: /health, /data, /drift |
-| Drift Detector | ✅ Complete | Detects missing, changed, and unexpected resources |
-| CI/CD GitHub Actions (Terraform) | ✅ Complete | fmt → validate → plan on every push |
-| CI/CD GitHub Actions (Docker) | ✅ Complete | CI on PR: build without push → CD on merge: build & push to Docker Hub |
-| Architecture Diagram | ✅ Complete | Draw.io diagram with CIDRs and traffic flow |
-| IMDSv2 Enforcement | ✅ Complete | Blocks SSRF-based credential theft via EC2 metadata service |
+| Component                                            | Status     | Notes                                                                                                                                 |
+| ---------------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| AWS Infrastructure (VPC, ALB, EC2, RDS, S3, IAM)     | ✅ Complete | Modular Terraform, 2 AZs, private data tier                                                                                           |
+| Containerized Flask API                              | ✅ Complete | 3 endpoints: /health, /data, /drift                                                                                                   |
+| Drift Detector                                       | ✅ Complete | Detects missing, changed, and unexpected resources                                                                                    |
+| CI/CD GitHub Actions (Terraform)                     | ✅ Complete | fmt → validate → plan on every push                                                                                                   |
+| CI/CD GitHub Actions (Docker)                        | ✅ Complete | CI on PR: build without push → CD on merge: build & push to Docker Hub                                                                |
+| Architecture Diagram                                 | ✅ Complete | Draw.io diagram with CIDRs and traffic flow                                                                                           |
+| IMDSv2 Enforcement                                   | ✅ Complete | Blocks SSRF-based credential theft via EC2 metadata service                                                                           |
+| NAT Gateway (private subnet outbound)                | ✅ Complete | EIP + NAT GW in public_subnet_1, private route table for both private subnets                                                         |
+| S3 Bucket Policy (TLS enforcement)                   | ✅ Complete | `aws:SecureTransport = false` + `Deny` + `Principal: *` blocks all HTTP access to both buckets                                        |
+| IAM Policy hardening (TLS + SID + Delete protection) | ✅ Complete | `aws:SecureTransport` condition on all S3 actions, SID identifiers on every statement, explicit Deny on DeleteObject and DeleteBucket |
+| ALB as EC2 front door (Security Group referencing)   | ✅ Complete | EC2 accepts HTTP only from ALB SG — not from internet. Health check on `/health`. Egress restricted to 443 + 53                       |
+
 
 ---
 
 ## 🛠 Stack
 
 - **Terraform** — Infrastructure as Code
-- **AWS** — VPC, EC2, RDS, S3, ALB, IAM
+- **AWS** — VPC, EC2, RDS, S3, ALB, IAM, NAT Gateway
 - **Python / Boto3** — AWS SDK, drift detection logic
 - **Docker** — Containerization
 - **Flask** — REST API
@@ -159,6 +177,11 @@ Before this change, the EC2 accepted HTTP from 0.0.0.0/0, which is a
 security risk. The solution uses Security Group referencing across three 
 files: modules/alb/main.tf, modules/ec2/main.tf, and root/main.tf as 
 the orchestrator.
+9. **NAT Gateway for private subnet outbound access** — Private subnets have no route to the Internet Gateway by design, which is correct for security. But that also means resources inside them — like RDS — cannot initiate outbound connections for updates or AWS service calls. The NAT Gateway solves this asymmetry: it allows private resources to reach the internet, while the internet cannot reach them back. It lives in a public subnet because it needs a route to the Internet Gateway to forward traffic outward. It holds an Elastic IP so the source address is always stable and predictable. Private subnets get a dedicated route table with a single rule: `0.0.0.0/0 → NAT Gateway`. The pattern is identical to how public subnets work — the only difference is the route target: public subnets point to the IGW, private subnets point to the NAT Gateway.
+10. **TLS enforcement with `aws:SecureTransport`** — Both the S3 bucket policy and the IAM role policy include a condition that enforces encrypted traffic. The logic works as a conditional block: if a request arrives over HTTP (`aws:SecureTransport = false`), the effect is `Deny` — access is blocked regardless of who is making the request. If the request arrives over HTTPS (`aws:SecureTransport = true`), the deny condition does not trigger and the allow rules apply normally. This creates a hard enforcement layer: even if credentials are valid, unencrypted requests never reach the bucket. The S3 bucket policy uses `Principal: *` with `Deny`, which means it applies to everyone — including the root account — making it impossible to accidentally access the bucket over HTTP. The IAM policy applies the same condition to `s3:ListBucket`, `s3:GetObject`, and `s3:PutObject`, so the EC2 role itself is also bound to HTTPS-only access.
+
+11. **SID identifiers in IAM policies** — Every policy statement includes a `Sid` (Statement ID) field with a descriptive name: `AllowListBuckets`, `DenyS3DeleteOperations`, `AllowEC2ToAssumeRole`. SIDs are optional in AWS, but they serve two practical purposes: they make each statement self-documenting so anyone reading the policy immediately understands its intent, and they make CloudWatch and CloudTrail logs easier to search — when a permission is evaluated or denied, the SID appears in the log entry, so you can find exactly which statement triggered it without reverse-engineering the JSON.
+
 
 ---
 
@@ -168,7 +191,7 @@ the orchestrator.
 - [x] IMDSv2 enforcement on EC2 instances
 - [x] IAM Hardening: least privilege policies, TLS conditions, bucket policies
 - [ ] Connect Flask API to RDS PostgreSQL for persistent storage
-- [ ] Add NAT Gateway for private subnet outbound access
+- [x] Add NAT Gateway for private subnet outbound access
 - [ ] CloudWatch alarms for EC2 and RDS
 - [ ] Replace SSH key pairs with AWS Systems Manager (SSM) Session Manager
 - [ ] Add WAF rules to the ALB
@@ -186,3 +209,4 @@ the orchestrator.
 ## 📄 License
 
 MIT
+
