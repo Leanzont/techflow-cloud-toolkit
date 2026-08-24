@@ -84,25 +84,25 @@ resource "aws_route_table_association" "associate_public_subnet_2" {
 
 # Elastic IP for NAT Gateway 
 resource "aws_eip" "nat_eip" {
-   domain = "vpc"
+  domain = "vpc"
 
-   tags = {
-     Name = "${var.project_name}-nat-eip"
-   }
+  tags = {
+    Name = "${var.project_name}-nat-eip"
+  }
 
-   depends_on = [aws_internet_gateway.gw_main_vp]
+  depends_on = [aws_internet_gateway.gw_main_vp]
 }
 
 # NAT Gateway - lives in public subnet 1, serves both private subnets 
 resource "aws_nat_gateway" "main" {
-   allocation_id = aws_eip.nat_eip.id
-   subnet_id     = aws_subnet.public_subnet_1.id
+  allocation_id = aws_eip.nat_eip.id
+  subnet_id     = aws_subnet.public_subnet_1.id
 
-   tags = {
-     Name = "${var.project_name}-nat-gw"
-   }
+  tags = {
+    Name = "${var.project_name}-nat-gw"
+  }
 
-   depends_on = [aws_internet_gateway.gw_main_vp]
+  depends_on = [aws_internet_gateway.gw_main_vp]
 }
 
 # Private Route Table - routes outbound traffic through NAT Gateway
@@ -121,12 +121,12 @@ resource "aws_route_table" "route_table_private" {
 
 # Associate private route table with private subnet 1
 resource "aws_route_table_association" "associate_private_subnet_1" {
-   subnet_id      = aws_subnet.private-subnet-1.id
-   route_table_id = aws_route_table.route_table_private.id
+  subnet_id      = aws_subnet.private-subnet-1.id
+  route_table_id = aws_route_table.route_table_private.id
 }
 
 # Associate private route table with private subnet 2 
 resource "aws_route_table_association" "associate_private_subnet_2" {
-   subnet_id      = aws_subnet.private-subnet-2.id
-   route_table_id = aws_route_table.route_table_private.id
+  subnet_id      = aws_subnet.private-subnet-2.id
+  route_table_id = aws_route_table.route_table_private.id
 }
