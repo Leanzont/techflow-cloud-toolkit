@@ -182,7 +182,7 @@ the orchestrator.
 
 11. **SID identifiers in IAM policies** — Every policy statement includes a `Sid` (Statement ID) field with a descriptive name: `AllowListBuckets`, `DenyS3DeleteOperations`, `AllowEC2ToAssumeRole`. SIDs are optional in AWS, but they serve two practical purposes: they make each statement self-documenting so anyone reading the policy immediately understands its intent, and they make CloudWatch and CloudTrail logs easier to search — when a permission is evaluated or denied, the SID appears in the log entry, so you can find exactly which statement triggered it without reverse-engineering the JSON.
 
-12. **ALB as a secure front door for EC2** — Before adding the ALB, the EC2 security group accepted HTTP from `0.0.0.0/0` directly — anyone could hit port 80 on the instance. The ALB changes this: the EC2 security group now has no inbound HTTP rule at all. Instead, it only accepts traffic from the ALB security group via Security Group referencing. The EC2 is completely unreachable from the open internet on port 80. The ALB also adds health checking — it monitors the `/health` endpoint and stops routing traffic to an instance that is not responding. For outbound traffic, the EC2 connects directly through the Internet Gateway on port 443 (HTTPS) for Docker and AWS services, and port 53 (UDP) for DNS. No other outbound traffic is allowed.
+
 ---
 
 ## 🔮 Future Improvements
