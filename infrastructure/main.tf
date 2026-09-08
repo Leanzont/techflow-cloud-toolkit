@@ -103,3 +103,13 @@ resource "aws_security_group_rule" "alb_egress_to_ec2" {
   description              = "Allow ALB to forward HTTP to EC2 only"
 }
 
+module "cloudwatch" {
+  source = "./modules/cloudwatch"
+
+  project_name            = "${var.project_name}-cloudwatch"
+  alert_email             = var.alert_email
+  ec2_instance_id         = module.ec2.instance_id
+  alb_arn_suffix          = module.alb.alb_arn_suffix
+  target_group_arn_suffix = module.alb.target_group_arn_suffix
+}
+

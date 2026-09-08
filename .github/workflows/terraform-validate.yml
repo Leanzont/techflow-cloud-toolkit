@@ -65,6 +65,7 @@ jobs:
           bucket_name_backups= "${{ vars.TF_VAR_bucket_name_backups }}"
           instance_type      = "${{ vars.TF_VAR_instance_type }}"
           db_password        = "${{ secrets.TF_VAR_db_password }}"
+          alert_email        = "${{ vars.TF_VAR_alert_email }}"
           EOF
 
       - name: Terraform Plan
