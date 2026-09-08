@@ -184,9 +184,9 @@ the orchestrator.
 
 12. **CloudWatch is an AWS** — monitoring and observability service that collects operational data from AWS resources — metrics, logs, and events — and evaluates them against thresholds you define.
 
-I added it because without monitoring, infrastructure is blind. If EC2 CPU hits 90% or the ALB starts returning 5xx errors, there is no way to know until something visibly breaks. CloudWatch solves this by watching resources continuously and triggering SNS notifications when a threshold is crossed — so problems are detected before they escalate.
+    I added it because without monitoring, infrastructure is blind. If EC2 CPU hits 90% or the ALB starts returning 5xx errors, there is no way to know until something visibly breaks. CloudWatch solves this by watching resources continuously and     triggering SNS notifications when a threshold is crossed — so problems are detected before they escalate.
 
-In this project I monitor EC2 CPU utilization, EC2 status checks, and ALB 5xx errors, with email alerts delivered through an SNS topic and subscription.
+    In this project I monitor EC2 CPU utilization, EC2 status checks, and ALB 5xx errors, with email alerts delivered through an SNS topic and subscription.
 
 
 ---
