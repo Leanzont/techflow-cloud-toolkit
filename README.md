@@ -182,6 +182,12 @@ the orchestrator.
 
 11. **SID identifiers in IAM policies** — Every policy statement includes a `Sid` (Statement ID) field with a descriptive name: `AllowListBuckets`, `DenyS3DeleteOperations`, `AllowEC2ToAssumeRole`. SIDs are optional in AWS, but they serve two practical purposes: they make each statement self-documenting so anyone reading the policy immediately understands its intent, and they make CloudWatch and CloudTrail logs easier to search — when a permission is evaluated or denied, the SID appears in the log entry, so you can find exactly which statement triggered it without reverse-engineering the JSON.
 
+12. **CloudWatch is an AWS** — monitoring and observability service that collects operational data from AWS resources — metrics, logs, and events — and evaluates them against thresholds you define.
+
+I added it because without monitoring, infrastructure is blind. If EC2 CPU hits 90% or the ALB starts returning 5xx errors, there is no way to know until something visibly breaks. CloudWatch solves this by watching resources continuously and triggering SNS notifications when a threshold is crossed — so problems are detected before they escalate.
+
+In this project I monitor EC2 CPU utilization, EC2 status checks, and ALB 5xx errors, with email alerts delivered through an SNS topic and subscription.
+
 
 ---
 
