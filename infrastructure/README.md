@@ -12,6 +12,7 @@ Terraform modules that provision the complete AWS environment for the TechFlow C
 | RDS | `rds` | PostgreSQL instance in private subnets |
 | S3 | `s3` | Buckets for logs and backups |
 | IAM | `iam` | Roles, policies, and instance profiles |
+| CloudWatch | `cloudwatch` | EC2 and ALB alarms with SNS email notifications |
 
 ## Architecture & Modules
 
@@ -123,9 +124,12 @@ Creates two S3 buckets (logs and backups) with public access blocked and a bucke
 ### iam
 Creates the IAM role, trust policy, and inline policy for EC2. The policy grants S3 read/write/list access with `aws:SecureTransport` enforcement and an explicit Deny on delete operations. All statements include `Sid` identifiers for CloudTrail visibility.
 
+### cloudwatch
+Creates CloudWatch metric alarms for EC2 CPU utilization, EC2 status checks, ALB 5xx errors (ELB and target), and ALB request count. Alarms notify via an SNS topic with email subscription. Uses `treat_missing_data = "notBreaching"` on ALB alarms to avoid false positives when there is no active traffic.
+
 ## Future Improvements
 
 - [ ] Connect Flask API to RDS PostgreSQL for persistent storage
-- [ ] CloudWatch alarms for EC2 and RDS
+- [x] CloudWatch alarms for EC2 and ALB
 - [ ] Replace SSH key pairs with AWS Systems Manager (SSM) Session Manager
 - [ ] Add WAF rules to the ALB
