@@ -71,7 +71,8 @@ techflow-cloud-toolkit/
 │   │   ├── ec2/                # Compute instances
 │   │   ├── rds/                # PostgreSQL database
 │   │   ├── s3/                 # Buckets for logs & backups
-│   │   └── iam/                # Roles, policies, profiles
+│   │   ├── iam/                # Roles, policies, profiles
+│   │   └── cloudwatch/         # AWS monitoring and observability service
 │   ├── main.tf                 # Root module composition
 │   ├── backend.tf              # S3 remote state
 │   ├── variables.tf
@@ -106,14 +107,14 @@ techflow-cloud-toolkit/
 | S3 Bucket Policy (TLS enforcement)                   | ✅ Complete | `aws:SecureTransport = false` + `Deny` + `Principal: *` blocks all HTTP access to both buckets                                        |
 | IAM Policy hardening (TLS + SID + Delete protection) | ✅ Complete | `aws:SecureTransport` condition on all S3 actions, SID identifiers on every statement, explicit Deny on DeleteObject and DeleteBucket |
 | ALB as EC2 front door (Security Group referencing)   | ✅ Complete | EC2 accepts HTTP only from ALB SG — not from internet. Health check on `/health`. Egress restricted to 443 + 53                       |
-
+| CloudWatch monitoring for EC2 and ALB | ✅ Complete | Added CloudWatch alarms and SNS email notifications. Without it, infrastructure runs blind — no visibility into CPU spikes or 5xx errors |
 
 ---
 
 ## 🛠 Stack
 
 - **Terraform** — Infrastructure as Code
-- **AWS** — VPC, EC2, RDS, S3, ALB, IAM, NAT Gateway
+- **AWS** — VPC, EC2, RDS, S3, ALB, IAM, NAT Gateway, CloudWatch, SNS
 - **Python / Boto3** — AWS SDK, drift detection logic
 - **Docker** — Containerization
 - **Flask** — REST API
@@ -182,7 +183,7 @@ the orchestrator.
 
 11. **SID identifiers in IAM policies** — Every policy statement includes a `Sid` (Statement ID) field with a descriptive name: `AllowListBuckets`, `DenyS3DeleteOperations`, `AllowEC2ToAssumeRole`. SIDs are optional in AWS, but they serve two practical purposes: they make each statement self-documenting so anyone reading the policy immediately understands its intent, and they make CloudWatch and CloudTrail logs easier to search — when a permission is evaluated or denied, the SID appears in the log entry, so you can find exactly which statement triggered it without reverse-engineering the JSON.
 
-12. **CloudWatch is an AWS** — monitoring and observability service that collects operational data from AWS resources — metrics, logs, and events — and evaluates them against thresholds you define.
+12. **CloudWatch** — Amazon CloudWatch is a monitoring and observability service that collects operational data from AWS resources — metrics, logs, and events — and evaluates them against thresholds you define.
 
     I added it because without monitoring, infrastructure is blind. If EC2 CPU hits 90% or the ALB starts returning 5xx errors, there is no way to know until something visibly breaks. CloudWatch solves this by watching resources continuously and     triggering SNS notifications when a threshold is crossed — so problems are detected before they escalate.
 
@@ -198,7 +199,7 @@ the orchestrator.
 - [x] IAM Hardening: least privilege policies, TLS conditions, bucket policies
 - [ ] Connect Flask API to RDS PostgreSQL for persistent storage
 - [x] Add NAT Gateway for private subnet outbound access
-- [ ] CloudWatch alarms for EC2 and RDS
+- [x] CloudWatch alarms for EC2 and ALB
 - [ ] Replace SSH key pairs with AWS Systems Manager (SSM) Session Manager
 - [ ] Add WAF rules to the ALB
 - [ ] AWS Certified Solutions Architect — Associate (Dec 2026)
