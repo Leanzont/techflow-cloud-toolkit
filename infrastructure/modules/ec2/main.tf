@@ -4,13 +4,6 @@ resource "aws_security_group" "sg_ec2" {
   description = "my seurity group ec2 SSH, HTTP"
   vpc_id      = var.vpc_id
 
-  ingress {
-    description = "SSH only my ip"
-    to_port     = 22
-    from_port   = 22
-    protocol    = "tcp"
-    cidr_blocks = [var.my_ip]
-  }
 
   egress {
     description = "HTTP outbound for Docker and AWS services"
@@ -48,7 +41,7 @@ resource "aws_instance" "instance_ec2_techflow" {
   instance_type          = var.instance_type
   subnet_id              = var.subnet_id
   vpc_security_group_ids = [aws_security_group.sg_ec2.id]
-  key_name               = var.public_key != "" ? aws_key_pair.my_key_ec2[0].key_name : null
+  key_name               = null # SSM replaces SSH — no key pair needed
   iam_instance_profile   = var.instance_profile
 
   # IMDSv2: Enforce session token, block SSRF
@@ -60,13 +53,19 @@ resource "aws_instance" "instance_ec2_techflow" {
   }
 
   user_data = <<-EOF
-                  #!/bin/bash
-                  yum update -y
-                  yum install -y docker
-                  systemctl start docker
-                  systemctl enable docker
-                  usermod -aG docker ec2-user
-                  EOF
+              #!/bin/bash
+              yum update -y
+              yum install -y docker
+              systemctl start docker
+              systemctl enable docker
+              usermod -aG docker ec2-user
+
+              # SSM Agent is pre-installed on Amazon Linux 2
+              # Ensure it is running and enabled
+              systemctl enable amazon-ssm-agent
+              systemctl start amazon-ssm-agent
+              EOF
+
   tags = {
     Name = "${var.project_name}-ec2-instance-techflow"
   }
