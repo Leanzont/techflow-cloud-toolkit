@@ -98,3 +98,9 @@ resource "aws_iam_instance_profile" "ec2_profile" {
   name = "${var.project_name}-ec2-profile"
   role = aws_iam_role.role_ec2.name
 }
+
+# SSM Managed Policy — allows EC2 to communicate with SSM endpoints
+resource "aws_iam_role_policy_attachment" "ssm_policy" {
+  role       = aws_iam_role.role_ec2.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}
