@@ -108,6 +108,7 @@ techflow-cloud-toolkit/
 | IAM Policy hardening (TLS + SID + Delete protection) | ✅ Complete | `aws:SecureTransport` condition on all S3 actions, SID identifiers on every statement, explicit Deny on DeleteObject and DeleteBucket |
 | ALB as EC2 front door (Security Group referencing)   | ✅ Complete | EC2 accepts HTTP only from ALB SG — not from internet. Health check on `/health`. Egress restricted to 443 + 53                       |
 | CloudWatch monitoring for EC2 and ALB | ✅ Complete | Added CloudWatch alarms and SNS email notifications. Without it, infrastructure runs blind — no visibility into CPU spikes or 5xx errors |
+| SSM Session Manager (replaced SSH) | ✅ Complete | No inbound ports open. Sessions authenticated through IAM — no key pairs required. All access logged automatically. |
 
 ---
 
@@ -188,6 +189,8 @@ the orchestrator.
     I added it because without monitoring, infrastructure is blind. If EC2 CPU hits 90% or the ALB starts returning 5xx errors, there is no way to know until something visibly breaks. CloudWatch solves this by watching resources continuously and     triggering SNS notifications when a threshold is crossed — so problems are detected before they escalate.
 
     In this project I monitor EC2 CPU utilization, EC2 status checks, and ALB 5xx errors, with email alerts delivered through an SNS topic and subscription.
+    
+13. **SSM Session Manager** — Replaced SSH and key pairs with AWS Systems Manager Session Manager. SSM enforces two independent security checks: your IAM identity must have `ssm:StartSession` permission, and the EC2 must be registered with SSM via the `AmazonSSMManagedInstanceCore` role policy. No inbound port 22 — the SSM Agent maintains an outbound connection on port 443 and sessions are delivered through that tunnel. One IAM group policy replaces managing individual key pairs per engineer.
 
 
 ---
@@ -200,7 +203,7 @@ the orchestrator.
 - [ ] Connect Flask API to RDS PostgreSQL for persistent storage
 - [x] Add NAT Gateway for private subnet outbound access
 - [x] CloudWatch alarms for EC2 and ALB
-- [ ] Replace SSH key pairs with AWS Systems Manager (SSM) Session Manager
+- [x] Replace SSH key pairs with AWS Systems Manager (SSM) Session Manager
 - [ ] Add WAF rules to the ALB
 - [ ] AWS Certified Solutions Architect — Associate (Dec 2026)
 
