@@ -131,5 +131,5 @@ Creates CloudWatch metric alarms for EC2 CPU utilization, EC2 status checks, ALB
 
 - [ ] Connect Flask API to RDS PostgreSQL for persistent storage
 - [x] CloudWatch alarms for EC2 and ALB
-- [ ] Replace SSH key pairs with AWS Systems Manager (SSM) Session Manager
+- [x] Replace SSH key pairs with AWS Systems Manager (SSM) Session Manager
 - [ ] Add WAF rules to the ALB
