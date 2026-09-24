@@ -112,3 +112,11 @@ module "cloudwatch" {
   target_group_arn_suffix = module.alb.target_group_arn_suffix
 }
 
+module "secrets" {
+  source = "./modules/secrets"
+
+  project_name = "${var.project_name}-secrets"
+  rds_endpoint = module.rds.rds_endpoint
+  db_password  = var.db_password
+}
+
