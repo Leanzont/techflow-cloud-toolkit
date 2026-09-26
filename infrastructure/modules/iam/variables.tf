@@ -10,3 +10,7 @@ variable "backups_bucket_arn" {
   type = string
 }
 
+variable "secret_arn" {
+  type        = string
+  description = "ARN of the Secrets Manager secret for RDS credentials"
+}
