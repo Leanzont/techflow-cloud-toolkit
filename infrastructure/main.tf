@@ -42,6 +42,7 @@ module "iam" {
   project_name       = "${var.project_name}-IAM"
   log_bucket_arn     = module.s3.log_bucket_arn
   backups_bucket_arn = module.s3.backups_bucket_arn
+  secret_arn         = module.secrets.secret_arn
 
 }
 

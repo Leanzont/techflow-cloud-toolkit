@@ -87,6 +87,12 @@ resource "aws_iam_role_policy" "s3_policy" {
           "${var.log_bucket_arn}/*",
           "${var.backups_bucket_arn}/*"
         ]
+      },
+      {
+        Sid    = "AllowReadRDSSecret"
+        Effect = "Allow"
+        Action = "secretsmanager:GetSecretValue"
+        Resource = var.secret_arn
       }
     ]
   })
