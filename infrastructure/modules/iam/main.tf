@@ -89,9 +89,9 @@ resource "aws_iam_role_policy" "s3_policy" {
         ]
       },
       {
-        Sid    = "AllowReadRDSSecret"
-        Effect = "Allow"
-        Action = "secretsmanager:GetSecretValue"
+        Sid      = "AllowReadRDSSecret"
+        Effect   = "Allow"
+        Action   = "secretsmanager:GetSecretValue"
         Resource = var.secret_arn
       }
     ]
