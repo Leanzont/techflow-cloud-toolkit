@@ -72,8 +72,8 @@ techflow-cloud-toolkit/
 │   │   ├── rds/                # PostgreSQL database
 │   │   ├── s3/                 # Buckets for logs & backups
 │   │   ├── iam/                # Roles, policies, profiles
-│   │   └── cloudwatch/         # AWS monitoring and observability service
-│   │   └── secrets             # secret module for managing confidential data
+│   │   ├── cloudwatch/         # AWS monitoring and observability service
+│   │   └── secrets/            # secret module for managing confidential data
 │   ├── main.tf                 # Root module composition
 │   ├── backend.tf              # S3 remote state
 │   ├── variables.tf
