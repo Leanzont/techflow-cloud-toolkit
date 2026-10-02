@@ -52,7 +52,7 @@ resource "aws_instance" "instance_ec2_techflow" {
     instance_metadata_tags      = "disabled"
   }
 
-  user_data = <<-EOF
+    user_data = <<-EOF
               #!/bin/bash
               yum update -y
               yum install -y docker
@@ -64,7 +64,35 @@ resource "aws_instance" "instance_ec2_techflow" {
               # Ensure it is running and enabled
               systemctl enable amazon-ssm-agent
               systemctl start amazon-ssm-agent
+
+              # Read RDS credentials from Secrets Manager
+              SECRET=$(aws secretsmanager get-secret-value \
+                --secret-id ${var.secret_name} \
+                --region us-east-2 \
+                --query SecretString \
+                --output text)
+
+              DB_HOST=$(echo $SECRET | python3 -c "import sys,json; print(json.load(sys.stdin)['host'])")
+              DB_PORT=$(echo $SECRET | python3 -c "import sys,json; print(json.load(sys.stdin)['port'])")
+              DB_NAME=$(echo $SECRET | python3 -c "import sys,json; print(json.load(sys.stdin)['dbname'])")
+              DB_USER=$(echo $SECRET | python3 -c "import sys,json; print(json.load(sys.stdin)['username'])")
+              DB_PASS=$(echo $SECRET | python3 -c "import sys,json; print(json.load(sys.stdin)['password'])")
+
+              # Pull and run the Flask API container
+              docker pull ${var.docker_image}
+              docker run -d \
+                --name techflow-api \
+                --restart always \
+                -p 80:5000 \
+                -e DB_HOST=$DB_HOST \
+                -e DB_PORT=$DB_PORT \
+                -e DB_NAME=$DB_NAME \
+                -e DB_USER=$DB_USER \
+                -e DB_PASS=$DB_PASS \
+                -e AWS_DEFAULT_REGION=us-east-2 \
+                ${var.docker_image}
               EOF
+
 
   tags = {
     Name = "${var.project_name}-ec2-instance-techflow"

@@ -55,9 +55,9 @@ module "ec2" {
   subnet_id        = module.vpc.public_subnet_ids[0]
   vpc_id           = module.vpc.vpc_id
   instance_profile = module.iam.instance_profile
+  secret_name      = module.secrets.secret_name
+  docker_image     = "leanzont/techflow-api:latest"
 
-  # Only pass the key if the file exists locally
-  #  public_key = fileexists("${path.module}/modules/ec2/my-key-techflow.pub") ? file("${path.module}/modules/ec2/my-key-techflow.pub") : ""
 }
 
 module "rds" {
