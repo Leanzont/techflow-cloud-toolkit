@@ -52,7 +52,7 @@ resource "aws_instance" "instance_ec2_techflow" {
     instance_metadata_tags      = "disabled"
   }
 
-    user_data = <<-EOF
+  user_data = <<-EOF
               #!/bin/bash
               yum update -y
               yum install -y docker
