@@ -27,3 +27,14 @@ variable "public_key" {
   type        = string
   default     = ""
 }
+
+variable "secret_name" {
+  type        = string
+  description = "Secrets Manager secret name for RDS credentials"
+}
+
+variable "docker_image" {
+  type        = string
+  description = "Docker Hub image to pull and run"
+  default     = "leanzont/techflow-api:latest"
+}
