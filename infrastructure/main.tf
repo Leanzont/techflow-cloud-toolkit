@@ -103,6 +103,17 @@ resource "aws_security_group_rule" "alb_egress_to_ec2" {
   description              = "Allow ALB to forward HTTP to EC2 only"
 }
 
+# Allow EC2 to reach RDS PostgreSQL
+resource "aws_security_group_rule" "ec2_to_rds" {
+  type              = "egress"
+  from_port         = 5432
+  to_port           = 5432
+  protocol          = "tcp"
+  cidr_blocks       = ["10.0.0.0/16"]
+  security_group_id = module.ec2.sg_ec2_id
+  description       = "Allow EC2 to reach RDS PostgreSQL inside the VPC"
+}
+
 module "cloudwatch" {
   source = "./modules/cloudwatch"
 
