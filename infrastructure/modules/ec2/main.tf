@@ -37,12 +37,13 @@ resource "aws_key_pair" "my_key_ec2" {
 
 # EC2 Instance 
 resource "aws_instance" "instance_ec2_techflow" {
-  ami                    = var.ami
-  instance_type          = var.instance_type
-  subnet_id              = var.subnet_id
-  vpc_security_group_ids = [aws_security_group.sg_ec2.id]
-  key_name               = null # SSM replaces SSH — no key pair needed
-  iam_instance_profile   = var.instance_profile
+  ami                         = var.ami
+  instance_type               = var.instance_type
+  subnet_id                   = var.subnet_id
+  vpc_security_group_ids      = [aws_security_group.sg_ec2.id]
+  key_name                    = null # SSM replaces SSH — no key pair needed
+  iam_instance_profile        = var.instance_profile
+  user_data_replace_on_change = true
 
   # IMDSv2: Enforce session token, block SSRF
   metadata_options {
