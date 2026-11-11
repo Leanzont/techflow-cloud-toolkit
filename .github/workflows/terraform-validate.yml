@@ -20,7 +20,7 @@ env:
 
 jobs:
   terraform-validate:
-    name: Validate & Plan
+    name: Validate
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -28,7 +28,6 @@ jobs:
 
     permissions:
       contents: read
-      pull-requests: write
 
     steps:
       - name: Checkout
@@ -39,37 +38,14 @@ jobs:
         with:
           terraform_version: "1.15.6"
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-2
-
       - name: Terraform Format
         id: fmt
         run: terraform fmt -check -recursive
 
       - name: Terraform Init
         id: init
-        run: terraform init
+        run: terraform init -backend=false
 
       - name: Terraform Validate
         id: validate
         run: terraform validate
-      
-      - name: Create terraform.tfvars
-        run: |
-          cat <<EOF > terraform.tfvars
-          project_name       = "${{ vars.TF_VAR_project_name }}"
-          region             = "${{ vars.TF_VAR_region }}"
-          bucket_name_log    = "${{ vars.TF_VAR_bucket_name_log }}"
-          bucket_name_backups= "${{ vars.TF_VAR_bucket_name_backups }}"
-          instance_type      = "${{ vars.TF_VAR_instance_type }}"
-          db_password        = "${{ secrets.TF_VAR_db_password }}"
-          alert_email        = "${{ vars.TF_VAR_alert_email }}"
-          EOF
-
-      - name: Terraform Plan
-        id: plan
-        run: terraform plan -no-color -input=false -var-file=terraform.tfvars
