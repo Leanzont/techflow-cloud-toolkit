@@ -30,8 +30,7 @@ override.tf.json
 terraform.rc
 
 # SSH keys
-modules/ec2/my-key-techflow
-modules/ec2/my-key-techflow.pub
+infrastructure/modules/ec2/my-key-techflow*
 *.pem
 id_rsa*
 id_ed25519*
