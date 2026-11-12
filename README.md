@@ -193,6 +193,7 @@ the orchestrator.
     
 13. **SSM Session Manager** — Replaced SSH and key pairs with AWS Systems Manager Session Manager. SSM enforces two independent security checks: your IAM identity must have `ssm:StartSession` permission, and the EC2 must be registered with SSM via the `AmazonSSMManagedInstanceCore` role policy. No inbound port 22 — the SSM Agent maintains an outbound connection on port 443 and sessions are delivered through that tunnel. One IAM group policy replaces managing individual key pairs per engineer.
 
+14. **Flask Api**
 
 ---
 
