@@ -203,7 +203,7 @@ the orchestrator.
 - [x] CI/CD Docker workflow (build + push to Docker Hub)
 - [x] IMDSv2 enforcement on EC2 instances
 - [x] IAM Hardening: least privilege policies, TLS conditions, bucket policies
-- [ ] Connect Flask API to RDS PostgreSQL for persistent storage
+- [x] Connect Flask API to RDS PostgreSQL for persistent storage
 - [x] Add NAT Gateway for private subnet outbound access
 - [x] CloudWatch alarms for EC2 and ALB
 - [x] Replace SSH key pairs with AWS Systems Manager (SSM) Session Manager
