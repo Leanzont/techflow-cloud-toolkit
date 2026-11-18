@@ -110,6 +110,7 @@ techflow-cloud-toolkit/
 | ALB as EC2 front door (Security Group referencing)   | ✅ Complete | EC2 accepts HTTP only from ALB SG — not from internet. Health check on `/health`. Egress restricted to 443 + 53                       |
 | CloudWatch monitoring for EC2 and ALB | ✅ Complete | Added CloudWatch alarms and SNS email notifications. Without it, infrastructure runs blind — no visibility into CPU spikes or 5xx errors |
 | SSM Session Manager (replaced SSH) | ✅ Complete | No inbound ports open. Sessions authenticated through IAM — no key pairs required. All access logged automatically. |
+| Flask API → RDS PostgreSQL | ✅ Complete | API persists data to RDS via Secrets Manager credentials injected at runtime — no hardcoded passwords. Full flow: ALB → EC2 → Docker → Flask → RDS |
 
 ---
 
